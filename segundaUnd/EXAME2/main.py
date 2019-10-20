@@ -2,7 +2,7 @@ from individual import Individual
 from random import choice
 from math import floor
 from sys import argv
-
+import matplotlib.pyplot as plt
 
 def mapRange(currentRange, desiredRange, value):
     (a1, a2), (b1, b2) = currentRange, desiredRange
@@ -14,16 +14,19 @@ if __name__ == '__main__':
         crossoverType = argv[1]
         maxGeneration = int(argv[2])
         popSize = int(argv[3])
+        mutationRate = float(argv[4])
     except:
-        print(f"Arguments missing!\nUsage: {argv[0]} crossoverType maxGeneration popSize")
+        print(f"Arguments missing!\nUsage: {argv[0]} crossoverType maxGeneration popSize mutationRate")
         print("crossoverType: ELITE, HALF, HALF_ELITE")
         exit()
 
 
-    population = [Individual() for _ in range(popSize)]
+    population = [Individual(mutationRate) for _ in range(popSize)]
 
     generation = 0
     previousBest = population[0]
+    fitnessPltX = []
+    fitnessPltY = []
     while (generation < maxGeneration):
 
         # Encontarar o mehlor individuo
@@ -61,7 +64,18 @@ if __name__ == '__main__':
         if (previousBest.fitness() != best.fitness()):
             print(f'Generation: {generation:3}')
             print(f'\tBest: {best} Fitness: {best.fitness()}')
+            fitnessPltX.append(generation)
+            fitnessPltY.append(best.fitness())
 
         previousBest = best
 
         generation += 1
+
+    plt.figure(figsize=(10,5))
+    plt.xlabel('Generation')
+    plt.ylabel('Fitness')
+    plt.plot(fitnessPltX, fitnessPltY, 'or-')
+    plt.grid(color='black', linestyle='dashed', linewidth=.5, markevery=.0001)
+    fig = plt.gcf()
+    #fig.savefig(f"{crossoverType}_{maxGeneration}_{popSize}_{mutationRate}.png", dpi=100)
+    plt.show()

@@ -7,7 +7,9 @@ MUTATION_RATE = 0.01
 
 class Individual:
 
-    def __init__(self):
+    def __init__(self, mutationRate = MUTATION_RATE):
+        self.mutationRate = mutationRate
+
         self.chromosome = [
             random.uniform(MIN, MAX),
             random.uniform(MIN, MAX)
@@ -28,7 +30,7 @@ class Individual:
         #return 0.5*x*exp(-(x**2)/15.0-(y**2)/15.0)
 
     def crossover(self, partner, crossoverType):
-        child = Individual()
+        child = Individual(self.mutationRate)
 
         # Clonar o de maior fitness
         if (crossoverType == "ELITE"):
@@ -71,7 +73,7 @@ class Individual:
         return child
 
     def mutate(self):
-        if (random.random() < MUTATION_RATE):     
+        if (random.random() < self.mutationRate):     
             self.chromosome = [
                 random.uniform(MIN, MAX),
                 random.uniform(MIN, MAX)
