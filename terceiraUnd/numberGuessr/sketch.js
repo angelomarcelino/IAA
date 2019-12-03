@@ -87,7 +87,8 @@ function keyPressed(){
 			console.log(guess);
 
 			let target = document.getElementById("result");
-			target.innerText = `I think you drew a ${guess}`;
+			target.innerText = `I think you drew a ${guess} 
+			with ${(predArray[0][guess]*100).toPrecision(3)}% of certainty`;
 		});
 	}
 }
