@@ -14,8 +14,8 @@ function setup() {
 	// load model in js script
 	(async () => {
 		network = await tf.loadLayersModel(
-			'http://localhost:8080/model/numberGuessr.json',
-			'http://localhost:8080/model/numberGuessr.weights.bin'
+			'https://angelomarcelino.github.io/IAA/terceiraUnd/numberGuessr/model/numberGuessr.json',
+			'https://angelomarcelino.github.io/IAA/terceiraUnd/numberGuessr/model/numberGuessr.weights.bin'
 		);
 	})();	
 }
