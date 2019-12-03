@@ -5,7 +5,6 @@ class NumCanvas {
     this.offset = (MAIN_CANVAS_SIZE - this.canvasSize * this.pixelSize) / 2;
 
     this.pixel = [];
-    this.flatenedPixels = [];
     let posY = 0;
     for (let i = 0; i < this.canvasSize; i++) {
       this.pixel[i] = [];
@@ -28,15 +27,24 @@ class NumCanvas {
     for (let i = 0; i < this.canvasSize; i++) {
       let posX = 0;
       for (let j = 0; j < this.canvasSize; j++) {
-        //constrain(this.pixel[i][j].value, 0, 1);
-        fill(this.pixel[i][j].value);
+        constrain(this.pixel[i][j].value, 0, 1);
+        fill(this.pixel[i][j].value*255);
         stroke(127);
         rect(posX, posY, this.pixelSize, this.pixelSize);
         posX += this.pixelSize;
       }
       posY += this.pixelSize;
     }
-    this.flatenedPixels = this.pixel.flat();
+  }
+
+  flatenedPixels(){
+    let flatenedPixels = [];
+    for (let i = 0; i < this.canvasSize; i++) {
+      for (let j = 0; j < this.canvasSize; j++) {
+        flatenedPixels.push(this.pixel[i][j].value);
+      }
+    }
+    return flatenedPixels;
   }
 
   clearCanvas(){
@@ -68,14 +76,14 @@ class NumCanvas {
         let newj = j + jBest - 1;
         if (newi > 0 && newi < this.canvasSize) {
           if (newj > 0 && newj < this.canvasSize) {
-            if (this.pixel[newi][newj].value < 75)
-              this.pixel[newi][newj].value += 15;
+            if (this.pixel[newi][newj].value < 0.3)
+              this.pixel[newi][newj].value += 0.1;
           }
         }
       }
     }
     // if (jBest + 1 < this.canvasSize - 1 &&  this.pixel[iBest][jBest].value != 1)
     //     this.pixel[iBest][jBest + 1].value += 0.1;
-    this.pixel[iBest][jBest].value = 255;
+    this.pixel[iBest][jBest].value = 1;
   }
 }

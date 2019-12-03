@@ -5,49 +5,19 @@ const PIXEL_SIZE = 10;
 let numCanvas;
 
 let network;
-let trainingData;
-let targets = [];
-
-// Training variables
-let drawnNumber = 0;
-let numberSize = 0; // How many numbers there are. Max = trainingSize
-let trainingSize = 10; 
-
-function preload() {
-	trainingData = loadJSON('trainingData/xizis.json', Array);
-}
 
 function setup() {
 	createCanvas(MAIN_CANVAS_SIZE, MAIN_CANVAS_SIZE);
 	background(127);
 	numCanvas = new NumCanvas(CANVAS_SIZE, PIXEL_SIZE);
 
-	// Setting up Training Data
-	for(let i = 0; i < 100; i++){
-		let ys = trainingData.data[i].ys;
-		for(let j = 0; j < 10; j++){
-			if (ys[j]){
-				let label = {'label':'0'};
-				label.label = j.toString();
-				targets[i] = label;
-			} 
-		}
-	}
-
-	let options = {
-		inputs: 784,
-		outputs: ['label'], // 10 labels from '0' to '9'
-		task: 'classification',
-		debug: true,
-		batchSize: 128
-	}
-	network = ml5.neuralNetwork(options);
-
-	// Adding data
-	for(let i = 0; i < 100; i++){
-		network.addData(trainingData.data[i].xs, targets[i]);
-	}
-		
+	// load model in js script
+	(async () => {
+		network = await tf.loadLayersModel(
+			'http://localhost:8080/model/numberGuessr.json',
+			'http://localhost:8080/model/numberGuessr.weights.bin'
+		);
+	})();	
 }
 
 function draw() {
@@ -67,6 +37,9 @@ function keyPressed(){
 
 	if (keyCode == BACKSPACE){
 		numCanvas.clearCanvas();
+
+		let target = document.getElementById("result");
+		target.innerText = '';
 	}
 
 	// Building our dataset
@@ -102,24 +75,37 @@ function keyPressed(){
 		numCanvas.clearCanvas();
 	} */
 
-	// Training our model (data already normalized)
-	if (keyCode == 84){
-		network.normalizeData();
-		console.log('training started!');
-		let options = {
-			epochs: 1000
-		}
-		network.train(options, whileTraining, doneTraining);
+	// Predicting
+	if (keyCode == 80){ // LETRA P
+		const x = tf.tensor2d([numCanvas.flatenedPixels()]);
+		x.print();
+		let prediction = network.predict(x);
+		prediction.array().then((stuff) => { 
+			predArray = stuff;
+			console.log(predArray);
+			let guess = indexOfMax(predArray[0]);
+			console.log(guess);
+
+			let target = document.getElementById("result");
+			target.innerText = `I think you drew a ${guess}`;
+		});
 	}
-
 }
 
-// Callback funcs
-function whileTraining(epoch, loss){
-	console.log(`epoch: ${epoch}, loss:${loss}`);
-}
+function indexOfMax(arr) {
+    if (arr.length === 0) {
+        return -1;
+    }
 
-function doneTraining(){
-	console.log('done!');
-}
+    let max = arr[0];
+    let maxIndex = 0;
 
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] > max) {
+            maxIndex = i;
+            max = arr[i];
+        }
+    }
+
+    return maxIndex;
+}
