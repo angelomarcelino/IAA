@@ -38,7 +38,7 @@ class Individual:
                 child.chromosome = self.chromosome
             else:
                 child.chromosome = partner.chromosome
-        # Herança aleatória
+        # Heranca aleatoria
         elif (crossoverType == "HALF"):
             if (random.random() < 0.5):
                 child.chromosome[0] = self.chromosome[0]

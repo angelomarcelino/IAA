@@ -48,7 +48,7 @@ if __name__ == '__main__':
             for _ in range(floor(fitnessNormalized * 10)):
                 mattingPool.append(individual)
 
-        # Gera a nova população
+        # Gera a nova populacao
         population = []
         for _ in range(popSize):
             # Seleciona os pais
